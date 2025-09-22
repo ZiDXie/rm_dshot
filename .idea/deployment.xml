@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" remoteFilesAllowedToDisappearOnAutoupload="false">
+    <serverData>
+      <paths name="Noetic (1fc1bd70-1de5-4df8-a6d2-192117c9e524)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/tmp/tmp.N2MEP4973v/rm_dshot" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>

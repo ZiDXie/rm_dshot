@@ -29,3 +29,18 @@ static uint16_t prepareDshotPacket(const uint16_t value, bool requestTelemetry)
     packet = (packet << 4) | csum;
     return packet;
 }
+
+/// @brief Convert 16 bits packet to 16 pwm signal
+/// @param motor_dmabuffer The buffer to store the pwm signal
+/// @param packet Dshot packet,use prepareDshotPacket() to get it
+static void prepareDmabuffer(uint32_t* motor_dmabuffer,uint16_t packet)
+{
+    for(int i = 0; i < 16; i++)
+    {
+        motor_dmabuffer[i] = (packet & 0x8000) ? MOTOR_BIT_1 : MOTOR_BIT_0; //MSB first
+        packet <<= 1;
+    }
+
+    motor_dmabuffer[16] = 0; //Add two 0 at the end to reset the signal
+    motor_dmabuffer[17] = 0;
+}

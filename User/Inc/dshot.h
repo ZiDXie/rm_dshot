@@ -8,6 +8,7 @@
 //User include
 #include "main.h"
 #include "stdbool.h"
+#include "tim.h"
 
 ///For dshot600 on 168MHz F407
 ///The term of pwm is 1.67us,the bit1 is 1.25us high level, and the bit0 is 0.625us high level
@@ -21,7 +22,12 @@
 ///two additional bits are added at the end with actual compare values of 0.
 #define DSHOT_DMA_BUFFER_SIZE   18
 
-uint32_t motor1_dmaBurstBuffer[DSHOT_DMA_BUFFER_SIZE];
-uint32_t motor2_dmaBurstBuffer[DSHOT_DMA_BUFFER_SIZE];
+#define MOTOR1_TIM (&htim1)
+#define MOTOR1_TIM_CHANNEL TIM_CHANNEL_1
+
+
+void dshotInit();
+
+
 
 #endif //RM_DSHOT_DSHOT_H

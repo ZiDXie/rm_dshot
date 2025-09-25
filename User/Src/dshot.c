@@ -128,7 +128,18 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 }
 
 /// @brief dshot init
-void dshotInit(void) {}
+void dshotInit(void) {
+    printf("Dshot init start\r\n");
+    dshotTimerStart();  // Start the dshot timer
+    HAL_TIM_Base_Start_IT(&DSHOT_UPDATE_TIM);  // Start the dshot update timer
+    dshotUpdateChannel(0, 0, false);
+    HAL_Delay(100);
+    printf("Init complete\r\n");
+    printf("Enter dshot loop\r\n");
+}
 
 /// @brief dshot loop
-void dshotLoop(void) {}
+void dshotLoop(void) {
+    uint16_t value = 0;
+    dshotUpdateChannel(0, value, false);
+}

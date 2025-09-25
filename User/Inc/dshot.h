@@ -8,6 +8,7 @@
 // User include
 #include "main.h"
 #include "stdbool.h"
+#include "stdio.h"
 #include "tim.h"
 
 /// For dshot600 on 168MHz F407

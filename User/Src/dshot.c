@@ -6,10 +6,8 @@
 
 uint32_t dmaBurstBuffer[DSHOT_DMA_BUFFER_SIZE * 4];
 
-void dshotInit(void) {}
-
 /// @brief Start the dshot timer
-void dshotTimerStart(void) { HAL_TIM_PWM_Start(MOTOR1_TIM, MOTOR1_TIM_CHANNEL); }
+void dshotTimerStart(void) { HAL_TIM_PWM_Start(&MOTOR1_TIM, MOTOR1_TIM_CHANNEL); }
 
 /// @brief To check CRC and prepare the dshot packet
 /// @param value
@@ -50,7 +48,15 @@ static void loadDmaBufferDshot(uint32_t *dmabuffer, int stride, uint16_t packet)
     dmabuffer[i++ * stride] = 0;
 }
 
-static void dshotDmaCpltCallback() {}
+/// @brief DMA complete callback
+/// @param hdma DMA handle
+static void dshotDmaCpltCallback(DMA_HandleTypeDef *hdma) {
+    TIM_HandleTypeDef *htim = (TIM_HandleTypeDef *) ((DMA_HandleTypeDef *) hdma)->Parent;  // Get the timer handle
+    if (htim->hdma[TIM_DMA_ID_UPDATE]->Init.Mode == DMA_NORMAL) {
+        htim->State = HAL_TIM_STATE_READY;
+    }
+    HAL_TIM_PeriodElapsedCallback(htim);
+}
 
 /// @brief Start the dshot dma
 /// @param BurstBaseAddress TIM BASE+TIM_CCRx
@@ -102,10 +108,27 @@ bool dshotUpdateChannel(uint8_t index, uint16_t value, bool requestTelemetry) {
 /// @brief Write the dshot signal
 /// @return
 bool dshotWrite(void) {
-    HAL_StatusTypeDef status = dshotDmaStart();
+    HAL_StatusTypeDef status = dshotDmaStart(&MOTOR1_TIM, TIM_DMABase_CCR1, TIM_DMA_UPDATE, (uint32_t *) dmaBurstBuffer,
+                                             TIM_DMABurstLength_4Transfers, DSHOT_DMA_BUFFER_SIZE * 4);
     if (status != HAL_OK) {
         return false;
     } else {
         return true;
     }
 }
+
+/// @brief Timer period elapsed callback
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+    if (htim->Instance == MOTOR1_TIM.Instance) {
+        HAL_TIM_DMABurst_WriteStop(&MOTOR1_TIM, TIM_DMA_UPDATE);  // Stop the dma burst
+    }
+    if (htim->Instance == DSHOT_UPDATE_TIM.Instance) {  // Update dshot signal periodically
+        dshotWrite();  // Write the dshot signal
+    }
+}
+
+/// @brief dshot init
+void dshotInit(void) {}
+
+/// @brief dshot loop
+void dshotLoop(void) {}

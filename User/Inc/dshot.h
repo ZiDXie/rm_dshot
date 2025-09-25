@@ -24,7 +24,7 @@
 
 #define MOTOR1_TIM (htim1)
 #define MOTOR1_TIM_CHANNEL TIM_CHANNEL_1
-#define DSHOT_UPDATE_TIM (htim2)  // Todo: Set the timer used for dshot
+#define DSHOT_UPDATE_TIM (htim2)
 
 void dshotInit();
 

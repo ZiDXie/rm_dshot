@@ -28,6 +28,6 @@
 #define DSHOT_UPDATE_TIM (htim2)
 
 void dshotInit();
-
+void dshotLoop();
 
 #endif  // RM_DSHOT_DSHOT_H

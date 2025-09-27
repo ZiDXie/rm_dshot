@@ -5,6 +5,7 @@
 #include "dshot.h"
 
 uint32_t dmaBurstBuffer[DSHOT_DMA_BUFFER_SIZE * 4];
+uint16_t count = 0;
 
 /// @brief Get dshot frequency
 /// Unused
@@ -31,7 +32,12 @@ void dshotTimerConfig() {
 }
 
 /// @brief Start the dshot timer
-void dshotTimerStart(void) { HAL_TIM_PWM_Start(&MOTOR1_TIM, MOTOR1_TIM_CHANNEL); }
+void dshotTimerStart(void) {
+    HAL_TIM_PWM_Start(&MOTOR1_TIM, TIM_CHANNEL_1);
+    HAL_TIM_PWM_Start(&MOTOR1_TIM, TIM_CHANNEL_2);
+    HAL_TIM_PWM_Start(&MOTOR1_TIM, TIM_CHANNEL_3);
+    HAL_TIM_PWM_Start(&MOTOR1_TIM, TIM_CHANNEL_4);
+}
 
 /// @brief To check CRC and prepare the dshot packet
 /// @param value
@@ -125,7 +131,7 @@ bool dshotUpdateChannel(uint8_t index, uint16_t value, bool requestTelemetry) {
         return false;
     }
     uint16_t packet = prepareDshotPacket(value, requestTelemetry);
-    loadDmaBufferDshot(&dmaBurstBuffer[index], 4, packet);
+    loadDmaBufferDshot(&(dmaBurstBuffer[index]), 4, packet);
     return true;
 }
 
@@ -133,7 +139,7 @@ bool dshotUpdateChannel(uint8_t index, uint16_t value, bool requestTelemetry) {
 /// @return
 bool dshotWrite(void) {
     HAL_StatusTypeDef status = dshotDmaStart(&MOTOR1_TIM, TIM_DMABase_CCR1, TIM_DMA_UPDATE, (uint32_t *) dmaBurstBuffer,
-                                             TIM_DMABurstLength_4Transfers, DSHOT_DMA_BUFFER_SIZE * 4);
+                                             TIM_DMABURSTLENGTH_4TRANSFERS, DSHOT_DMA_BUFFER_SIZE * 4);
     if (status != HAL_OK) {
         return false;
     } else {
@@ -157,6 +163,9 @@ void dshotInit(void) {
     dshotTimerStart();  // Start the dshot timer
     HAL_TIM_Base_Start_IT(&DSHOT_UPDATE_TIM);  // Start the dshot update timer
     dshotUpdateChannel(0, 0, false);
+    dshotUpdateChannel(1, 0, false);
+    dshotUpdateChannel(2, 0, false);
+    dshotUpdateChannel(3, 0, false);
     HAL_Delay(100);
     printf("Init complete\r\n");
     printf("Enter dshot loop\r\n");
@@ -164,6 +173,9 @@ void dshotInit(void) {
 
 /// @brief dshot loop
 void dshotLoop(void) {
-    uint16_t value = 0;
+    uint16_t value = 500;
     dshotUpdateChannel(0, value, false);
+    dshotUpdateChannel(1, value, false);
+    dshotUpdateChannel(2, value, false);
+    dshotUpdateChannel(3, value, false);
 }

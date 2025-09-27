@@ -81,6 +81,18 @@ void MX_TIM1_Init(void)
   {
     Error_Handler();
   }
+  if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_4) != HAL_OK)
+  {
+    Error_Handler();
+  }
   sBreakDeadTimeConfig.OffStateRunMode = TIM_OSSR_DISABLE;
   sBreakDeadTimeConfig.OffStateIDLEMode = TIM_OSSI_DISABLE;
   sBreakDeadTimeConfig.LockLevel = TIM_LOCKLEVEL_OFF;
@@ -157,10 +169,10 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle)
     hdma_tim1_up.Init.Direction = DMA_MEMORY_TO_PERIPH;
     hdma_tim1_up.Init.PeriphInc = DMA_PINC_DISABLE;
     hdma_tim1_up.Init.MemInc = DMA_MINC_ENABLE;
-    hdma_tim1_up.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
-    hdma_tim1_up.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
+    hdma_tim1_up.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+    hdma_tim1_up.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
     hdma_tim1_up.Init.Mode = DMA_NORMAL;
-    hdma_tim1_up.Init.Priority = DMA_PRIORITY_HIGH;
+    hdma_tim1_up.Init.Priority = DMA_PRIORITY_LOW;
     hdma_tim1_up.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
     if (HAL_DMA_Init(&hdma_tim1_up) != HAL_OK)
     {
@@ -198,8 +210,11 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* timHandle)
     __HAL_RCC_GPIOE_CLK_ENABLE();
     /**TIM1 GPIO Configuration
     PE9     ------> TIM1_CH1
+    PE11     ------> TIM1_CH2
+    PE13     ------> TIM1_CH3
+    PE14     ------> TIM1_CH4
     */
-    GPIO_InitStruct.Pin = GPIO_PIN_9;
+    GPIO_InitStruct.Pin = GPIO_PIN_9|GPIO_PIN_11|GPIO_PIN_13|GPIO_PIN_14;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

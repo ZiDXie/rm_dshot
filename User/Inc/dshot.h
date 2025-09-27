@@ -7,16 +7,28 @@
 
 // User include
 #include "main.h"
+#include "math.h"
 #include "stdbool.h"
 #include "stdio.h"
 #include "tim.h"
 
+#define MHZ_TO_HZ(x) ((x) * 1000000)
+
+#define MOTOR_DSHOT600_HZ MHZ_TO_HZ(12)
+#define MOTOR_DSHOT300_HZ MHZ_TO_HZ(6)
+#define MOTOR_DSHOT150_HZ MHZ_TO_HZ(3)
+
+typedef enum {
+    MOTOR_PROTOCOL_DSHOT150,
+    MOTOR_PROTOCOL_DSHOT300,
+    MOTOR_PROTOCOL_DSHOT600,
+} motorProtocolTypes_e;
+
 /// For dshot600 on 168MHz F407
 /// The term of pwm is 1.67us,the bit1 is 1.25us high level, and the bit0 is 0.625us high level
-/// Todo: Adjust these values according to the actual clock frequency of the timer
-#define MOTOR_BIT_0 1
-#define MOTOR_BIT_1 1
-#define MOTOR_BITLENGTH 1
+#define MOTOR_BIT_0 7
+#define MOTOR_BIT_1 14
+#define MOTOR_BITLENGTH 20
 
 /// Normally, a DSHOT frame contains only 16 bits of data,
 /// but since the TIM BURST DMA method requires resetting at the end of the frame to prevent continuous signal output,

@@ -6,6 +6,30 @@
 
 uint32_t dmaBurstBuffer[DSHOT_DMA_BUFFER_SIZE * 4];
 
+/// @brief Get dshot frequency
+/// Unused
+/// @param pwmProtocolType Dshot protocol type
+/// @return dshot frequency
+uint32_t getDshotHz(motorProtocolTypes_e pwmProtocolType) {
+    switch (pwmProtocolType) {
+        case (MOTOR_PROTOCOL_DSHOT600):
+            return MOTOR_DSHOT600_HZ;
+        case (MOTOR_PROTOCOL_DSHOT300):
+            return MOTOR_DSHOT300_HZ;
+        case (MOTOR_PROTOCOL_DSHOT150):
+            return MOTOR_DSHOT150_HZ;
+        default:
+            return MOTOR_DSHOT600_HZ;
+    }
+}
+
+/// @brief Configure the dshot timer
+/// Unused
+void dshotTimerConfig() {
+    // uint16_t period = MOTOR_BITLENGTH - 1;
+    // uint16_t prescaler = lrintf((float) timer_freq / count_freq + 0.01f) - 1;
+}
+
 /// @brief Start the dshot timer
 void dshotTimerStart(void) { HAL_TIM_PWM_Start(&MOTOR1_TIM, MOTOR1_TIM_CHANNEL); }
 
